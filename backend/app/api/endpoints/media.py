@@ -1,8 +1,9 @@
+import json
 import os
 import shutil
-from typing import Any, List
+from typing import Any, List, Optional
 
-from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
+from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import crud, models, schemas
@@ -32,6 +33,10 @@ async def create_upload_file(
     *,
     db: AsyncSession = Depends(deps.get_db),
     file: UploadFile = File(...),
+    latitude: Optional[float] = Form(None),
+    longitude: Optional[float] = Form(None),
+    bookmarks: Optional[str] = Form(None),
+    tags: Optional[str] = Form(None),
     current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
@@ -55,7 +60,16 @@ async def create_upload_file(
     finally:
         file.file.close()
 
-    media_in = schemas.MediaCreate(filename=file.filename)
+    parsed_bookmarks = json.loads(bookmarks) if bookmarks else None
+    parsed_tags = json.loads(tags) if tags else None
+
+    media_in = schemas.MediaCreate(
+        filename=file.filename,
+        latitude=latitude,
+        longitude=longitude,
+        bookmarks=parsed_bookmarks,
+        tags=parsed_tags,
+    )
     media = await crud.crud_media.create_with_owner(
         db=db,
         obj_in=media_in,
@@ -100,7 +114,6 @@ async def delete_media_item(
     if media.owner_id != current_user.id:
         raise HTTPException(status_code=403, detail="Not enough permissions")
 
-    # Also delete the file from the filesystem
     upload_dir = "uploads"
     file_path = os.path.join(upload_dir, media.filename)
     if os.path.exists(file_path):
