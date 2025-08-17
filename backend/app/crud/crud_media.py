@@ -1,4 +1,4 @@
-from typing import List
+from typing import Any, Dict, List, Optional
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
@@ -32,7 +32,19 @@ async def create_with_owner(
         owner_id=owner_id,
         size=size,
         content_type=content_type,
+        ai_processing_status="pending",
     )
+    db.add(db_obj)
+    await db.commit()
+    await db.refresh(db_obj)
+    return db_obj
+
+
+async def update(
+    db: AsyncSession, *, db_obj: Media, obj_in: Dict[str, Any]
+) -> Media:
+    for field, value in obj_in.items():
+        setattr(db_obj, field, value)
     db.add(db_obj)
     await db.commit()
     await db.refresh(db_obj)

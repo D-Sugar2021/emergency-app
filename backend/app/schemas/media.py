@@ -29,6 +29,9 @@ class Media(MediaBase):
     longitude: Optional[float] = None
     bookmarks: Optional[List[int]] = None
     tags: Optional[List[str]] = None
+    transcription: Optional[str] = None
+    summary: Optional[str] = None
+    ai_processing_status: Optional[str] = None
 
     class Config:
         from_attributes = True

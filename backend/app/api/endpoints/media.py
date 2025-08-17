@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import crud, models, schemas
 from app.api import deps
+from app.services import ai_processor
 
 router = APIRouter()
 
@@ -77,6 +78,19 @@ async def create_upload_file(
         size=file_size,
         content_type=file.content_type,
     )
+
+    # This is a synchronous call to the dummy AI service.
+    # In a real application, this should be a background task.
+    transcription = ai_processor.transcribe(file_path)
+    summary = ai_processor.summarize(transcription)
+
+    update_data = {
+        "transcription": transcription,
+        "summary": summary,
+        "ai_processing_status": "completed",
+    }
+    media = await crud.crud_media.update(db=db, db_obj=media, obj_in=update_data)
+
     return media
 
 
