@@ -13,3 +13,4 @@ class User(Base):
     is_active = Column(Boolean(), default=True)
 
     vault = relationship("GuardianVault", back_populates="user", uselist=False)
+    settings = relationship("UserSettings", back_populates="user", uselist=False)

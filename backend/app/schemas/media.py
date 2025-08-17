@@ -16,6 +16,7 @@ class MediaCreate(BaseModel):
     longitude: Optional[float] = None
     bookmarks: Optional[List[int]] = None
     tags: Optional[List[str]] = None
+    capture_method: Optional[str] = None
 
 
 # Properties to return to client
@@ -32,6 +33,7 @@ class Media(MediaBase):
     transcription: Optional[str] = None
     summary: Optional[str] = None
     ai_processing_status: Optional[str] = None
+    capture_method: Optional[str] = None
 
     class Config:
         from_attributes = True

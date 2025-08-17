@@ -38,6 +38,7 @@ async def create_upload_file(
     longitude: Optional[float] = Form(None),
     bookmarks: Optional[str] = Form(None),
     tags: Optional[str] = Form(None),
+    capture_method: Optional[str] = Form(None),
     current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
@@ -70,6 +71,7 @@ async def create_upload_file(
         longitude=longitude,
         bookmarks=parsed_bookmarks,
         tags=parsed_tags,
+        capture_method=capture_method,
     )
     media = await crud.crud_media.create_with_owner(
         db=db,

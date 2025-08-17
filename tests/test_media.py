@@ -29,6 +29,7 @@ class TestMedia:
             "longitude": -118.2437,
             "bookmarks": json.dumps([1, 2, 3]),
             "tags": json.dumps(["ai", "test"]),
+            "capture_method": "button",
         }
         response = client.post(
             "/api/v1/media/", files=files, data=form_data, headers=headers

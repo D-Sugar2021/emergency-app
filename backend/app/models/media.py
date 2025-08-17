@@ -25,4 +25,6 @@ class Media(Base):
     summary = Column(Text, nullable=True)
     ai_processing_status = Column(String, default="pending")
 
+    capture_method = Column(String, nullable=True)
+
     owner = relationship("User")
